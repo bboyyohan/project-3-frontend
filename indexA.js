@@ -3,8 +3,19 @@ const USERS_URL = `${BASE_URL}/users`
 const MATCHES_URL = `${BASE_URL}/matches`
 
 document.addEventListener("DOMContentLoaded", () => {
-    loginPage()
-    // fetchUsers()
+    // loginPage()
+
+    fetchUsers()
+    let btn = document.getElementById('see-pending-matches')
+    btn.addEventListener("click", () => {
+        // let login = document.getElementById('login')
+        // login.innerHTML = " "
+        fetchPendingMatches()
+    })
+
+    let messagesBtn = document.getElementById('inbox')
+    messagesBtn.addEventListener("click", console.log("messages")
+    )
 })
 
 
@@ -26,20 +37,8 @@ function loginPage() {
     // loginBtn.dataset.matchId = pendingObj.id
     loginBtn.innerHTML = "Login"
     loginBtn.addEventListener('click', () => {
-        event.preventDefault()
-        login.innerHTML= " "
         console.log("login")
-        fetchUsers()
-        // let btn = document.getElementById('see-pending-matches')
-        // btn.addEventListener("click", () => {
-        //     // let login = document.getElementById('login')
-        //     // login.innerHTML = " "
-        //     fetchPendingMatches()
-        // })
-    
-        // let messagesBtn = document.getElementById('inbox')
-        // messagesBtn.addEventListener("click", console.log("messages")
-        // )
+        // debugger
     })
     form.append(input, loginBtn)
     login.append(h1, form)
@@ -92,7 +91,11 @@ function renderPendingMatches(pendingObj) {
     let dislikeBtn = document.createElement('button')
     dislikeBtn.dataset.matchId = pendingObj.id
     dislikeBtn.innerHTML = "Dislike"
-    dislikeBtn.addEventListener('click', console.log("decline"))
+    // dislikeBtn.addEventListener('click', console.log("decline"))
+    dislikeBtn.addEventListener('click', (e) => {
+        declineMatch(e) 
+        // debugger
+    })
   
     div.append(name, dob, matchImg, likeBtn, dislikeBtn)
     getMain().appendChild(div)
@@ -192,6 +195,25 @@ function acceptMatch(e) {
     // }
 
 }
+
+function declineMatch(e) {
+    let matchId = e.currentTarget.parentElement.dataset.id
+    let match = event.currentTarget.parentElement
+
+    debugger
+    fetch(`${MATCHES_URL}/${matchId}`, {
+        method: 'DELETE'
+    })
+    match.remove()
+        // headers: {
+        //     "Content-Type": "application/json"
+        // },
+        // body: JSON.stringify({
+            // 'liker_id': , 'liked_id': 2
+        // })
+  
+}
+
 
 
 // function createUser(userObj) {
