@@ -3,34 +3,32 @@ const USERS_URL = `${BASE_URL}/users`
 const MATCHES_URL = `${BASE_URL}/matches`
 
 document.addEventListener("DOMContentLoaded", () => {
-    // loginPage()
+    loginPage()
 
-    fetchUsers()
-    let btn = document.getElementById('see-pending-matches')
-    btn.addEventListener("click", () => {
-        // let login = document.getElementById('login')
-        // login.innerHTML = " "
-        fetchPendingMatches()
-    })
-
-    let messagesBtn = document.getElementById('inbox')
-    messagesBtn.addEventListener("click", () => {
-        fetchMutualMatches()
-    })
-    // messagesBtn.addEventListener("click", console.log("messages")
-    
+    // fetchUsers()
 })
 
 function fetchMutualMatches() {
+    let main = document.getElementById("main-body")
+    main.innerHTML = " "
     fetch(`${USERS_URL}/2/mutual`)
     .then(res => res.json())
+    // .then(mutualArr => {
+    //     mutualArr.filter(mutual => {
+    //         // removed && mutual.gender != "female"
+    //         return mutual.liker_id != 2
+    //     }).forEach(mutualObj => renderMutualMatches(mutualObj))                         
+    // })
+// }
     .then(mutualArr => mutualArr.forEach(mutualObj => {
         console.log(mutualObj)
         renderMutualMatches(mutualObj)
+
     }))
+}
     // .then(mutualMatches => console.log(mutualMatches)
     // )
-}
+
 
 function renderMutualMatches(mutualObj) {
     // let main = document.getElementById("main-body")
@@ -44,8 +42,8 @@ function renderMutualMatches(mutualObj) {
     let name = document.createElement('p')
     name.innerText = mutualObj.liker.name
     
-    let dob = document.createElement('p')
-    dob.innerText = mutualObj.liker.dob
+    let age = document.createElement('p')
+    age.innerText = mutualObj.liker.age
 
     let matchImg = document.createElement('img')
     matchImg.src = mutualObj.liker.picture
@@ -63,12 +61,17 @@ function renderMutualMatches(mutualObj) {
 
     let dislikeBtn = document.createElement('button')
     dislikeBtn.dataset.matchId = mutualObj.id
-    dislikeBtn.innerHTML = "Dislike"
-    dislikeBtn.addEventListener('click', console.log("decline"))
+    dislikeBtn.innerHTML = "Unmatch"
+    dislikeBtn.addEventListener('click', (e) => {
+        declineMatch(e) 
+        let card = e.currentTarget.parentElement
+        return card.remove()
+    })
   
-    div.append(name, dob, matchImg, likeBtn, dislikeBtn)
+    div.append(name, age, matchImg, dislikeBtn)
     getMain().appendChild(div)
 }
+
 
 function loginPage() {
     let login = document.getElementById('login')
@@ -88,8 +91,23 @@ function loginPage() {
     // loginBtn.dataset.matchId = pendingObj.id
     loginBtn.innerHTML = "Login"
     loginBtn.addEventListener('click', () => {
+        event.preventDefault()
+        login.innerHTML= " "
         console.log("login")
-        // debugger
+        fetchUsers()
+        let btn = document.getElementById('see-pending-matches')
+        btn.addEventListener("click", () => {
+            // let login = document.getElementById('login')
+            // login.innerHTML = " "
+            fetchPendingMatches()
+        })
+    
+        let messagesBtn = document.getElementById('inbox')
+        messagesBtn.addEventListener("click", () => {
+            fetchMutualMatches()
+        })
+        // messagesBtn.addEventListener("click", console.log("messages")
+        
     })
     form.append(input, loginBtn)
     login.append(h1, form)
@@ -102,13 +120,20 @@ function fetchPendingMatches() {
     main.innerHTML = " "
     fetch(`${USERS_URL}/2/matches`)
     .then(res => res.json())
-    .then(pendingArr => pendingArr.forEach(pendingObj => {
-        // console.log(pendingObj)
-        renderPendingMatches(pendingObj)
-        // debugger
-    // .then(pendingArr => pendingArr.forEach(pending => {
-    //     console.log(pending)
-    }))
+    .then(pendingsArray => {
+        pendingsArray.filter(pending => {
+            // removed && pending.gender != "female"
+            return pending.approval != true
+        }).forEach(pendingObj => renderPendingMatches(pendingObj))
+    })
+
+
+
+    // .then(pendingArr => pendingArr.forEach(pendingObj => {
+
+    //     renderPendingMatches(pendingObj)
+    
+    // }))
 }
 
 function renderPendingMatches(pendingObj) {
@@ -123,8 +148,8 @@ function renderPendingMatches(pendingObj) {
     let name = document.createElement('p')
     name.innerText = pendingObj.liker.name
     
-    let dob = document.createElement('p')
-    dob.innerText = pendingObj.liker.dob
+    let age = document.createElement('p')
+    age.innerText = pendingObj.liker.age
 
     let matchImg = document.createElement('img')
     matchImg.src = pendingObj.liker.picture
@@ -136,8 +161,13 @@ function renderPendingMatches(pendingObj) {
     // )
     likeBtn.addEventListener('click', (e) => {
         acceptMatch(e) 
-        // debugger
+        let card = e.currentTarget.parentElement
+        return card.remove()
     })
+
+    // likeBtn.addEventListener('click', (e) => {
+    //     acceptMatch(e) 
+    // })
 
     let dislikeBtn = document.createElement('button')
     dislikeBtn.dataset.matchId = pendingObj.id
@@ -148,7 +178,7 @@ function renderPendingMatches(pendingObj) {
         // debugger
     })
   
-    div.append(name, dob, matchImg, likeBtn, dislikeBtn)
+    div.append(name, age, matchImg, likeBtn, dislikeBtn)
     getMain().appendChild(div)
 }
 
@@ -173,8 +203,8 @@ function renderUser(userObj) {
     let name = document.createElement('p')
     name.innerText = userObj.name
     
-    let dob = document.createElement('p')
-    dob.innerText = userObj.dob
+    let age = document.createElement('p')
+    age.innerText = userObj.age
 
     let userImg = document.createElement('img')
     userImg.src = userObj.picture
@@ -183,15 +213,23 @@ function renderUser(userObj) {
     likeBtn.dataset.userId = userObj.id
     likeBtn.innerHTML = "Like"
     likeBtn.addEventListener('click', (e) => {
-        likeUser(e) //removed userObj
+        likeUser(e) 
+        let card = e.currentTarget.parentElement
+        return card.remove()
     })
 
     let dislikeBtn = document.createElement('button')
     dislikeBtn.dataset.userId = userObj.id
     dislikeBtn.innerHTML = "Dislike"
-    dislikeBtn.addEventListener('click', dislikeUser)
+    dislikeBtn.addEventListener('click', (e) => {
+        dislikeUser(e) //removed userObj
+        let card = e.currentTarget.parentElement
+        return card.remove()
+    })
+    
+   
   
-    div.append(name, dob, userImg, likeBtn, dislikeBtn)
+    div.append(name, age, userImg, likeBtn, dislikeBtn)
     getMain().appendChild(div)
 
 }
@@ -223,6 +261,7 @@ function likeUser(e) {
         body: JSON.stringify(match)
     }).then(res => res.json())
     .then(result => console.log(result))
+
 }
 
 function acceptMatch(e) {
@@ -271,7 +310,7 @@ function declineMatch(e) {
 //     let id = event.currentTarget.dataset.id
 //     let userObjInfo = {
 //         name: userObj.name,
-//         dob: userObj.dob,
+//         age: userObj.age,
 //         picture: userObj.picture,
 //         id: id
 //     }
@@ -292,4 +331,3 @@ function getMain() {
 }
 
 
-//does not have login working but has console.log for mutual work

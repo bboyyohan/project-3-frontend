@@ -219,3 +219,5 @@ function getMain() {
 }
 
 
+// this one has login working partially? need to work on method for 
+// making it so I can access the user's matches through the email
